@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from '@material-ui/core';
+import { Typography, Container, Box } from '@material-ui/core';
+import Forms from 'components/Form';
 
 export default function AddForm() {
-  return <></>;
+  return (
+    <>
+      <Container>
+        <Box display='flex' justifyContent='center'>
+          <Typography variant='h4' gutterBottom>
+            Add User
+          </Typography>
+        </Box>
+        <Forms />
+      </Container>
+    </>
+  );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  container,
+  Container,
   Grid,
   Button,
   Table,
@@ -9,27 +9,28 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  IconButton,
 } from '@material-ui/core';
 import {
   Plus as PlusIcon,
-  Pencil as PencilIcon,
+  Pencil as EditIcon,
   Delete as DeleteIcon,
 } from 'mdi-material-ui';
+import { useHistory } from 'react-router-dom';
 
 export default function UserList() {
   const [state, setState] = useState({
     users: [],
-    addModal: false,
-    editModal: false,
   });
-
+  const history = useHistory();
   const [selectedUser, setSelectedUser] = useState();
   //setItem
   const setItem = (action, user) => {
     setSelectedUser(user);
     const { _id } = user;
     if (action === 'edit') {
-      setState((prevState) => ({ ...prevState, editModal: true }));
+      // setState((prevState) => ({ ...prevState, editModal: true }));
+      //punta ka sa /edit/id na route tapos ipasa mo yung needed props sa form
     } else if (action === 'delete') {
       DeleteItem(_id);
     }
@@ -112,8 +113,12 @@ export default function UserList() {
             </Table>
           </TableContainer>
         </Grid>
-        <Button variant='contained' color='primary'>
-          <PlusIcon color='primary' />
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={() => history.push('/add')}
+        >
+          <PlusIcon /> Add
         </Button>
       </Container>
     </>
