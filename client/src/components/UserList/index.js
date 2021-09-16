@@ -8,6 +8,9 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  makeStyles,
+  createStyles,
+  Theme,
   TableRow,
   IconButton,
 } from '@material-ui/core';
@@ -16,14 +19,26 @@ import {
   Pencil as EditIcon,
   Delete as DeleteIcon,
 } from 'mdi-material-ui';
+import { getUsers } from 'services';
 import { useHistory } from 'react-router-dom';
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    actionsCell: {
+      display: 'flex',
+      justifyContent: 'end',
+    },
+  })
+);
 
 export default function UserList() {
   const [state, setState] = useState({
     users: [],
   });
-  const history = useHistory();
   const [selectedUser, setSelectedUser] = useState();
+  const history = useHistory();
+  const classes = useStyles();
+
   //setItem
   const setItem = (action, user) => {
     setSelectedUser(user);
@@ -58,17 +73,19 @@ export default function UserList() {
     let filteredUsers = copyUsers.filter((users) => users._id !== id);
     setState((prevState) => ({ ...prevState, users: filteredUsers }));
   };
-  const renderName = ({ firstName, lastName, middleName }) => {
-    return (
-      <>
-        {lastName +
-          ', ' +
-          firstName +
-          ' ' +
-          middleName.subString(0, 1).toUpperCase()}
-      </>
-    );
+  const renderName = ({ firstName, lastName }) => {
+    return <>{lastName + ', ' + firstName + ' '}</>;
   };
+
+  useEffect(() => {
+    const fetchTodo = async () => {
+      const { data } = await getUsers();
+      setState((prevState) => ({ ...prevState, users: data }));
+    };
+
+    fetchTodo();
+  }, []);
+
   const { users } = state;
   return (
     <>
@@ -76,7 +93,6 @@ export default function UserList() {
         <Grid container>
           <TableContainer>
             <Table aria-label='User List'>
-              <caption>User List</caption>
               <TableHead>
                 <TableRow>
                   <TableCell>Name</TableCell>
@@ -91,18 +107,14 @@ export default function UserList() {
                   <TableRow key={user._id}>
                     <TableCell>{renderName(user)}</TableCell>
                     <TableCell align='right'>
-                      {user.telephoneNumber
-                        ? user.telephoneNumber
-                        : user.phoneNumber}
+                      {user.telephoneNum ? user.telephoneNum : user.phoneNumber}
                     </TableCell>
                     <TableCell align='right'>{user.sex}</TableCell>
                     <TableCell align='right'>{user.email}</TableCell>
-                    <TableCell>
+                    <TableCell className={classes.actionsCell}>
                       <IconButton onClick={() => setItem('edit', user)}>
                         <EditIcon color='primary' />
                       </IconButton>
-                    </TableCell>
-                    <TableCell>
                       <IconButton onClick={() => setItem('delete', user)}>
                         <DeleteIcon color='primary' />
                       </IconButton>

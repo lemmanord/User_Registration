@@ -9,12 +9,13 @@ import {
   createStyles,
   Theme,
   Button,
+  FormHelperText,
 } from '@material-ui/core';
 import { TextField, Select } from 'formik-material-ui';
 import { Formik, Form, Field, FormikHelpers, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-const sex = ['male', 'female'];
+const sex = ['male', 'female', ''];
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const addLevelSchema = Yup.object().shape({
+const addUserSchema = Yup.object().shape({
   firstName: Yup.string().required('Required'),
   middleName: Yup.string().required('Required'),
   lastName: Yup.string().required('Required'),
@@ -58,29 +59,29 @@ const addLevelSchema = Yup.object().shape({
   address: Yup.string().required('Required'),
 });
 
-const handleSubmit = (data, { setSubmitting, resetForm }) => {
-  console.log(data);
-};
-
-export default function Forms() {
+const Forms = ({ onSave }) => {
   const classes = useStyles();
 
-  const values = {
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    email: '',
-    sex: '',
-    telephoneNum: '',
-    phoneNumber: '',
-    address: '',
+  const handleSubmit = (data, { setSubmitting, resetForm }) => {
+    onSave(data);
+    resetForm();
   };
+
   return (
     <>
       <Formik
-        initialValues={values}
+        initialValues={{
+          firstName: '',
+          middleName: '',
+          lastName: '',
+          email: '',
+          sex: '',
+          telephoneNum: '',
+          phoneNumber: '',
+          address: '',
+        }}
         onSubmit={handleSubmit}
-        validationSchema={addLevelSchema}
+        validationSchema={addUserSchema}
       >
         {({ touched, errors, isSubmitting, resetForm }) => (
           <Box className={classes.BoxBody}>
@@ -99,7 +100,7 @@ export default function Forms() {
                     <FormControl className={classes.formControl}>
                       <Field
                         component={TextField}
-                        name='MiddleName'
+                        name='middleName'
                         type='text'
                         label='Middle Name'
                       />
@@ -107,7 +108,7 @@ export default function Forms() {
                     <FormControl className={classes.formControl}>
                       <Field
                         component={TextField}
-                        name='LastName'
+                        name='lastName'
                         type='text'
                         label='Last Name'
                       />
@@ -125,21 +126,28 @@ export default function Forms() {
                         label='Email'
                       />
                     </FormControl>
-                    <FormControl className={classes.formControl}>
-                      <InputLabel htmlFor='sex'>Sex </InputLabel>
+                    <FormControl
+                      className={classes.formControl}
+                      error={touched.sex && !!errors.sex}
+                    >
+                      <InputLabel htmlFor='Sex'>Sex </InputLabel>
                       <Field
                         component={Select}
                         name='sex'
                         inputProps={{
-                          id: 'sex',
+                          id: 'Sex',
                         }}
                       >
+                        <MenuItem value={''} disabled>
+                          <em>Options:</em>
+                        </MenuItem>
                         {sex.map((sex) => (
                           <MenuItem value={sex} key={sex}>
                             {sex}
                           </MenuItem>
                         ))}
                       </Field>
+                      <ErrorMessage component={FormHelperText} name='sex' />
                     </FormControl>
                   </Box>
 
@@ -150,7 +158,7 @@ export default function Forms() {
                       <Field
                         component={TextField}
                         name='telephoneNum'
-                        type='number'
+                        type='text'
                         label='Telephone Number'
                       />
                     </FormControl>
@@ -160,7 +168,7 @@ export default function Forms() {
                       <Field
                         component={TextField}
                         name='phoneNumber'
-                        type='number'
+                        type='text'
                         label='Phone Number'
                       />
                     </FormControl>
@@ -177,7 +185,7 @@ export default function Forms() {
                 </Paper>
                 <Box display='flex' justifyContent='flex-end'>
                   <Button type='submit' variant='contained'>
-                    Save User
+                    Save
                   </Button>
                 </Box>
               </Box>
@@ -187,4 +195,6 @@ export default function Forms() {
       </Formik>
     </>
   );
-}
+};
+
+export default Forms;
