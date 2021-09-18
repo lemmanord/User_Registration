@@ -59,27 +59,30 @@ const addUserSchema = Yup.object().shape({
   address: Yup.string().required('Required'),
 });
 
-const Forms = ({ onSave }) => {
+const Forms = ({ values, onSave }) => {
+  // const [initialValues, setInitialValues] = useState()
   const classes = useStyles();
 
   const handleSubmit = (data, { setSubmitting, resetForm }) => {
     onSave(data);
+    console.log(data);
     resetForm();
   };
 
+  const initalValues = {
+    firstName: values ? values.firstName : '',
+    middleName: values ? values.middleName : '',
+    lastName: values ? values.lastName : '',
+    email: values ? values.email : '',
+    sex: values ? values.sex : '',
+    telephoneNum: values ? values.telephoneNum : '',
+    phoneNumber: values ? values.phoneNumber : '',
+    address: values ? values.address : '',
+  };
   return (
     <>
       <Formik
-        initialValues={{
-          firstName: '',
-          middleName: '',
-          lastName: '',
-          email: '',
-          sex: '',
-          telephoneNum: '',
-          phoneNumber: '',
-          address: '',
-        }}
+        initialValues={initalValues}
         onSubmit={handleSubmit}
         validationSchema={addUserSchema}
       >

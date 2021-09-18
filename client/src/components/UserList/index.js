@@ -19,7 +19,7 @@ import {
   Pencil as EditIcon,
   Delete as DeleteIcon,
 } from 'mdi-material-ui';
-import { getUsers } from 'services';
+import { getUsers, deleteUser } from 'services';
 import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) =>
@@ -35,44 +35,24 @@ export default function UserList() {
   const [state, setState] = useState({
     users: [],
   });
-  const [selectedUser, setSelectedUser] = useState();
   const history = useHistory();
   const classes = useStyles();
 
   //setItem
-  const setItem = (action, user) => {
-    setSelectedUser(user);
+  const itemAction = (action, user) => {
     const { _id } = user;
+    console.log(action);
     if (action === 'edit') {
-      // setState((prevState) => ({ ...prevState, editModal: true }));
-      //punta ka sa /edit/id na route tapos ipasa mo yung needed props sa form
+      history.push(`/edit/${_id}`);
     } else if (action === 'delete') {
-      DeleteItem(_id);
+      deleteUser(_id);
+      setState((prevState) => ({
+        ...prevState,
+        users: state.users.filter((user) => user._id !== _id),
+      }));
     }
   };
-  //add
-  const AddItem = (newUser) => {
-    setState((prevState) => ({
-      ...prevState,
-      users: [...state.users, newUser],
-    }));
-  };
-  //edit
-  const EditItem = (user) => {
-    setState((prevState) => ({
-      ...prevState,
-      users: state.users.map((users) =>
-        users._id === user._id ? user : users
-      ),
-    }));
-  };
 
-  //delete
-  const DeleteItem = (id) => {
-    const copyUsers = [...state.users];
-    let filteredUsers = copyUsers.filter((users) => users._id !== id);
-    setState((prevState) => ({ ...prevState, users: filteredUsers }));
-  };
   const renderName = ({ firstName, lastName }) => {
     return <>{lastName + ', ' + firstName + ' '}</>;
   };
@@ -112,10 +92,10 @@ export default function UserList() {
                     <TableCell align='right'>{user.sex}</TableCell>
                     <TableCell align='right'>{user.email}</TableCell>
                     <TableCell className={classes.actionsCell}>
-                      <IconButton onClick={() => setItem('edit', user)}>
+                      <IconButton onClick={() => itemAction('edit', user)}>
                         <EditIcon color='primary' />
                       </IconButton>
-                      <IconButton onClick={() => setItem('delete', user)}>
+                      <IconButton onClick={() => itemAction('delete', user)}>
                         <DeleteIcon color='primary' />
                       </IconButton>
                     </TableCell>
